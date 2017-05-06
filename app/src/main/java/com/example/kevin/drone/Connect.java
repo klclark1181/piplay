@@ -8,6 +8,9 @@ import android.view.View;
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.TimeUnit;
+import java.lang.Thread;
+import java.lang.Runnable;
+
 
 public class Connect extends AppCompatActivity {
 
@@ -24,33 +27,25 @@ public class Connect extends AppCompatActivity {
             public void onClick(View v) {
                 // Perform action on click
                 setContentView(R.layout.connecting);
-
-                String sentence = "Jacob is the best";
-
-                String modifiedSentence = "Jaocb is the worst";
-                //BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
-                try {
-                    Socket clientSocket = new Socket("localhost", 5005);
-                    clientSocket.connect("192.168.1.102:5005", 30);
-                    //TimeUnit.SECONDS.sleep(30);
-                    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                    BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    outToServer.writeBytes(sentence + '\n');
-                    //modifiedSentence = inFromServer.readLine();
-                    System.out.println("FROM SERVER: " + modifiedSentence);
-                    clientSocket.close();
-                } catch (java.io.IOException e) {
-
-                    System.out.println("IOException: " + e.getMessage());
-                }
-                catch (java.lang.InterruptedException e) {
-
-                    System.out.println("InterruptedException: " + modifiedSentence);
-                }
-
+                Thread thre = performOnBackgroundThread(new connectrunnable4());
             }
         });
 
+    }
+
+    protected static Thread performOnBackgroundThread(final Runnable runnable) {
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    runnable.run();
+                } finally {
+
+                }
+            }
+        };
+        t.start();
+        return t;
     }
 
 
